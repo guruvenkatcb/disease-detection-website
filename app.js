@@ -9,22 +9,23 @@ const analysisRoutes = require('./routes/analysis');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
+// Middleware to parse JSON and URL-encoded data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/public', express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// Routes
+// Serve static files from the "public" directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Routes for handling upload and analysis
 app.use('/upload', uploadRoutes);
 app.use('/analysis', analysisRoutes);
 
-// Default route
+// Serve the homepage (index.html)
 app.get('/', (req, res) => {
-    res.send('Backend is running!');
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Start server
+// Start the server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
 });
