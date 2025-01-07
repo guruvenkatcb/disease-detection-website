@@ -1,30 +1,31 @@
 const express = require('express');
-const bodyParser = require('body-parser');
-const multer = require('multer');
+const cors = require('cors');
 const path = require('path');
 
+// Import Routes
 const uploadRoutes = require('./routes/upload');
 const analysisRoutes = require('./routes/analysis');
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const PORT = 5000;
 
 // Middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use('/public', express.static(path.join(__dirname, 'public')));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use(cors());
+app.use(express.json());
 
-// Routes
-app.use('/upload', uploadRoutes);
-app.use('/analysis', analysisRoutes);
+// Serve Frontend
+app.use(express.static(path.join(__dirname, 'disease-detection-website')));
 
-// Default route
-app.get('/', (req, res) => {
-    res.send('Backend is running!');
+// API Routes
+app.use('/api/upload', uploadRoutes);
+app.use('/api/analysis', analysisRoutes);
+
+// Default Route for Frontend
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'disease-detection-website', 'index.html'));
 });
 
-// Start server
+// Start Server
 app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server is running at http://localhost:${PORT}`);
 });
