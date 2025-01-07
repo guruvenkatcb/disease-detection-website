@@ -3,6 +3,7 @@ const analysisController = require('../controllers/analysisController');
 
 const router = express.Router();
 
-router.post('/', analysisController.analyzeDocument);
+router.post('/', analysisController.analyzeFile);
 
 module.exports = router;
+
