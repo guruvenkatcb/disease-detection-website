@@ -1,36 +1,37 @@
+// Attach an event listener to the form submission
 document.getElementById('uploadForm').addEventListener('submit', async (event) => {
-  event.preventDefault(); // Prevent default form submission
+  event.preventDefault(); // Prevent the form from submitting in the usual way
 
-  const fileInput = document.getElementById('fileInput');
-  const file = fileInput.files[0];
-  const status = document.getElementById('status');
+  const fileInput = document.getElementById('fileInput'); // Get the file input
+  const file = fileInput.files[0]; // Get the selected file
+  const status = document.getElementById('status'); // Get the status paragraph
 
-  // Check if a file is selected
+  // Check if no file is selected
   if (!file) {
-      status.textContent = 'No file selected!';
-      return;
+      status.textContent = 'No file selected!'; // Show error message if no file is selected
+      return; // Exit the function
   }
 
-  const formData = new FormData();
-  formData.append('file', file);
+  const formData = new FormData(); // Create a new FormData object to send the file
+  formData.append('file', file); // Append the selected file to the FormData object
 
   try {
-      // Make the fetch request to the backend
-      const response = await fetch('/upload', { // Adjusted URL if your backend route is `/upload`
+      // Send the file to the backend using the fetch function
+      const response = await fetch('/upload', { // Make sure this matches the route in your backend
           method: 'POST',
-          body: formData,
+          body: formData, // Send the file in the request body
       });
 
-      // Handle the response
+      // If the upload was successful
       if (response.ok) {
-          const result = await response.json();
-          status.textContent = `Uploaded: ${result.filename}`;
-          alert('File uploaded successfully!'); // Alert after successful upload
+          const result = await response.json(); // Get the server's response
+          status.textContent = `Uploaded: ${result.filename}`; // Show the uploaded filename
+          alert('File uploaded successfully!'); // Show the success alert
       } else {
-          status.textContent = 'Error uploading file.';
+          status.textContent = 'Error uploading file.'; // Show error message if something went wrong
       }
   } catch (err) {
-      status.textContent = 'An error occurred.';
-      console.error(err);
+      status.textContent = 'An error occurred.'; // Handle errors and show error message
+      console.error(err); // Log the error to the console for debugging
   }
 });
