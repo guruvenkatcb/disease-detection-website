@@ -1,38 +1,22 @@
-document.getElementById('uploadForm').addEventListener('submit', async (event) => {
-  event.preventDefault(); // Prevent form submission
-
-  const fileInput = document.getElementById('fileInput');
+document.getElementById('analyzeButton').addEventListener('click', async () => {
+  const fileInput = document.getElementById('imageUpload');
   const file = fileInput.files[0];
-  const status = document.getElementById('status');
-
+  
   if (!file) {
-    status.textContent = 'No file selected!';
-    return;
+      alert("Please upload an image.");
+      return;
   }
 
   const formData = new FormData();
-  formData.append('file', file);
+  formData.append('image', file);
 
   try {
-    const response = await fetch('/api/upload', {
-      method: 'POST',
-      body: formData,
-    });
-
-    if (response.ok) {
+      const response = await fetch('/analyze', { method: 'POST', body: formData });
       const result = await response.json();
-
-      // Update the status message dynamically
-      status.innerHTML = `
-        <p style="color: green;">${result.message}</p>
-        <p><strong>Filename:</strong> ${result.filename}</p>
-        <p><strong>Filepath:</strong> <a href="${result.filepath}" target="_blank">View File</a></p>
-      `;
-    } else {
-      status.textContent = 'Error uploading file.';
-    }
-  } catch (err) {
-    status.textContent = 'An error occurred.';
-    console.error(err);
+      document.getElementById('resultSection').style.display = 'block';
+      document.getElementById('resultText').textContent = `Result: ${result.prediction}`;
+  } catch (error) {
+      console.error("Error:", error);
+      alert("An error occurred while analyzing the image.");
   }
 });

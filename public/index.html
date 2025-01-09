@@ -1,20 +1,30 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Disease Detection</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Detection</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <h1>Disease Detection System</h1>
-  <form id="uploadForm" action="/upload" method="POST" enctype="multipart/form-data">
-    <label for="fileInput">Upload Medical Document:</label>
-    <input type="file" id="fileInput" name="file">
-    <button type="submit">Upload</button>
-  </form>
-  <p id="status"></p>
-  <script src="script.js"></script>
+    <header>
+        <h1>Disease Detection App</h1>
+        <p>Upload an image to detect the presence of a disease.</p>
+    </header>
+    <main>
+        <div class="upload-section">
+            <label for="imageUpload">Upload Image:</label>
+            <input type="file" id="imageUpload" accept="image/*">
+            <button id="analyzeButton">Analyze</button>
+        </div>
+        <div id="resultSection" style="display: none;">
+            <h2>Results:</h2>
+            <p id="resultText"></p>
+        </div>
+    </main>
+    <footer>
+        <p>&copy; 2025 Disease Detection App</p>
+    </footer>
+    <script src="script.js"></script>
 </body>
 </html>
-
