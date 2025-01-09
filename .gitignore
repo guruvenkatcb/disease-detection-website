@@ -2,3 +2,6 @@ node_modules/
 uploads/
 disease-detection-env/
 .env
+__pycache__/
+*.pyc
+model.h5

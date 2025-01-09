@@ -1,36 +1,39 @@
-from flask import Flask, request, jsonify
+from flask import Flask, render_template, request, jsonify
 from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing import image
 import numpy as np
+from PIL import Image
+import io
+import os
 
-app = Flask(__name__)
+# Initialize the Flask app with custom static folder
+app = Flask(__name__, static_folder='public')
 
-# Load the trained model
+# Load the trained model (ensure model.h5 exists)
 model = load_model('model.h5')
 
+# Home route to display the main webpage
 @app.route('/')
 def home():
     return render_template('index.html')
 
+# Predict route to handle file uploads and make predictions
 @app.route('/predict', methods=['POST'])
 def predict():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'})
+    # Get the uploaded image file from the form
+    file = request.files['image']
+    img = Image.open(io.BytesIO(file.read()))  # Open image from uploaded file
     
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'})
+    # Preprocess image (resize, normalize, etc.)
+    img = img.resize((150, 150))
+    img_array = np.array(img) / 255.0  # Normalize pixel values
+    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
     
-    # Load image and prepare for prediction
-    img = image.load_img(file, target_size=(150, 150))
-    img_array = image.img_to_array(img) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
-
-    # Predict using the model
+    # Make prediction using the loaded model
     prediction = model.predict(img_array)
-    result = 'Disease' if prediction[0][0] > 0.5 else 'Healthy'
+    
+    # Return prediction as a response
+    return jsonify({'prediction': prediction[0][0]})
 
-    return jsonify({'prediction': result})
-
+# Run the app
 if __name__ == '__main__':
     app.run(debug=True)
