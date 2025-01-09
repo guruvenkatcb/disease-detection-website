@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Disease Detection</title>
+</head>
+<body>
+    <h1>Disease Detection Model</h1>
+    <form action="/predict" method="post" enctype="multipart/form-data">
+        <label for="image">Upload Image:</label>
+        <input type="file" name="image" id="image" accept="image/*" required>
+        <button type="submit">Predict</button>
+    </form>
+</body>
+</html>

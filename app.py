@@ -1,66 +1,42 @@
-import os
 from flask import Flask, request, jsonify, render_template
-from werkzeug.utils import secure_filename
-from tensorflow.keras.models import load_model
-from tensorflow.keras.preprocessing import image
+from keras.models import load_model
+from keras.preprocessing import image
 import numpy as np
+import os
 
 app = Flask(__name__)
 
-# Load your trained model
-model = load_model('model.h5')  # Path to your trained model file
-
-# Set up the upload folder and allowed extensions
+# Folder for uploads
 UPLOAD_FOLDER = 'uploads'
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Function to check allowed extensions
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+# Load the trained model
+model = load_model('model.h5')
 
-# Route for the homepage (upload form)
+# Route for home
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template('index.html')  # Ensure index.html is in the templates folder
 
-# Route to handle file upload and prediction
+# Route for prediction
 @app.route('/predict', methods=['POST'])
 def predict():
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file part'})
-    
-    file = request.files['file']
-    if file.filename == '':
-        return jsonify({'error': 'No selected file'})
-    
-    if file and allowed_file(file.filename):
-        filename = secure_filename(file.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        file.save(filepath)
+    file = request.files['image']
+    img_path = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(img_path)
 
-        # Preprocess the image and make prediction
-        img = image.load_img(filepath, target_size=(224, 224))  # Adjust size as per your model
-        img_array = image.img_to_array(img)
-        img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+    # Preprocess the image
+    img = image.load_img(img_path, target_size=(224, 224))
+    img_array = image.img_to_array(img) / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
 
-        # Normalization if needed
-        img_array = img_array / 255.0
+    # Make a prediction
+    prediction = model.predict(img_array)
+    result = 'Disease' if prediction[0][0] > 0.5 else 'Healthy'
 
-        # Predict the class
-        prediction = model.predict(img_array)
-        
-        # Assuming your model outputs probabilities, you might need to adjust based on the model output
-        if prediction[0][0] > 0.5:
-            result = "Disease"
-        else:
-            result = "Healthy"
-        
-        return jsonify({'prediction': result})
-
-    else:
-        return jsonify({'error': 'Invalid file type'})
+    return jsonify({'prediction': result})
 
 if __name__ == '__main__':
     app.run(debug=True)
