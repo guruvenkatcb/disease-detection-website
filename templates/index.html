@@ -1,14 +1,28 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Disease Detection</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Detection Website</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <h1>Disease Detection Model</h1>
-    <form action="/predict" method="post" enctype="multipart/form-data">
-        <label for="image">Upload Image:</label>
-        <input type="file" name="image" id="image" accept="image/*" required>
-        <button type="submit">Predict</button>
-    </form>
+    <div class="container">
+        <h1>Welcome to Disease Detection</h1>
+        <p>Upload an image of a plant leaf to check if it is healthy or infected with disease.</p>
+        
+        <!-- Form to upload the image -->
+        <form action="/predict" method="POST" enctype="multipart/form-data">
+            <input type="file" name="image" accept="image/*" required>
+            <button type="submit">Upload and Predict</button>
+        </form>
+        
+        <!-- Area to display the prediction result -->
+        <div id="prediction-result">
+            <!-- Prediction will be displayed here after upload -->
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </body>
 </html>
