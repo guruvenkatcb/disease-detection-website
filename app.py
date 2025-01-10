@@ -1,6 +1,9 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
 from werkzeug.utils import secure_filename
+import tensorflow as tf
+from tensorflow.keras.preprocessing import image
+import numpy as np
 
 app = Flask(__name__)
 
@@ -10,6 +13,9 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Allowed file extensions
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+# Load the pre-trained model (make sure model.h5 exists in the directory)
+model = tf.keras.models.load_model('model.h5')
 
 # Function to check allowed file types
 def allowed_file(filename):
@@ -45,11 +51,24 @@ def detect_disease():
         filename = secure_filename(file.filename)
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         file.save(filepath)
-        
-        # Here you would add the logic to process the image and perform disease detection
-        # For now, we'll simulate the result
-        # Example: result = detect_disease_in_image(filepath)
-        result = "Pneumonia Detected"  # This is a placeholder for your actual detection logic
+
+        # Preprocess the image for prediction
+        img = image.load_img(filepath, target_size=(224, 224))  # Resize based on model input size
+        img_array = image.img_to_array(img)
+        img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+
+        # Normalize image (if needed by your model)
+        img_array = img_array / 255.0
+
+        # Get prediction from the model
+        prediction = model.predict(img_array)
+
+        # Assuming your model outputs a probability for each class, for example:
+        # 0 = Healthy, 1 = Pneumonia
+        if prediction[0][0] > 0.5:
+            result = "Pneumonia Detected"
+        else:
+            result = "Healthy"
 
         return render_template("detection_result.html", result=result, image_path=filepath)
     else:
