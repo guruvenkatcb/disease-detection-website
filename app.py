@@ -54,9 +54,10 @@ def detect_disease():
 
         # Image preprocessing (resize and normalize)
         img = Image.open(filepath)
-        img = img.resize((224, 224))  # Resize to the input shape the model expects (adjust if necessary)
-        img_array = np.array(img) / 255.0  # Normalize the image
-        img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension
+        img = img.convert("RGB")  # Ensure the image is in RGB format (3 channels)
+        img = img.resize((224, 224))  # Resize to the input shape the model expects (224x224)
+        img_array = np.array(img) / 255.0  # Normalize the image (scale pixel values between 0 and 1)
+        img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension (shape: (1, 224, 224, 3))
 
         # Predict using the model
         prediction = model.predict(img_array)
@@ -79,3 +80,4 @@ def result():
 # Run the app
 if __name__ == "__main__":
     app.run(debug=True)
+
