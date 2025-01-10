@@ -19,9 +19,8 @@ venv/
 *.ckpt
 
 # Dataset and uploaded files
-dataset/
-*.csv
-*.tsv
+resized_dataset/
+uploads/
 
 # Logs and debugging files
 logs/
@@ -62,3 +61,6 @@ disease-detection-env/
 
 # Ignore the .env file with sensitive information
 .env
+
+# VS Code specific settings
+.vscode/settings.json
