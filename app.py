@@ -8,9 +8,9 @@ app = Flask(__name__)
 def home():
     return render_template("index.html")
 
-@app.route("/detection")
+@app.route("/detection")  # Make sure this is defined here
 def detection():
-    return render_template("disease_detection.html")
+    return render_template("disease_detection.html")  # Make sure this HTML exists
 
 # New Routes
 @app.route("/dataset-info")
@@ -29,7 +29,6 @@ def submit_contact():
     message = request.form.get("message")
 
     # Save or process the contact form data
-    # Example: Save to a file (optional: integrate with a database)
     contact_file = os.path.join("uploads", "contact_messages.txt")
     with open(contact_file, "a") as f:
         f.write(f"Name: {name}\nEmail: {email}\nMessage: {message}\n---\n")
@@ -39,4 +38,3 @@ def submit_contact():
 
 if __name__ == "__main__":
     app.run(debug=True)
-
