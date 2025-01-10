@@ -1,0 +1,39 @@
+<!-- Disease Detection Page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Detection</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <script src="/static/js/preview.js"></script>  <!-- Link to the preview.js file -->
+</head>
+<body>
+
+<header>
+    <nav>
+        <a href="/">Home</a>
+        <a href="/detection">Disease Detection</a>
+        <a href="/dataset-info">Dataset Info</a>
+        <a href="/contact">Contact</a>
+    </nav>
+</header>
+
+<main>
+    <h1>Disease Detection</h1>
+    
+    <form action="/submit-disease-detection" method="POST" enctype="multipart/form-data">
+        <label for="imageUpload">Upload Image</label>
+        <input type="file" id="imageUpload" name="image" accept="image/*" onchange="previewImage(event)">
+        
+        <!-- Image preview -->
+        <div id="imagePreview">
+            <img id="preview" src="" alt="Image Preview" style="display:none; width: 300px; height: auto;">
+        </div>
+
+        <button type="submit">Detect Disease</button>
+    </form>
+</main>
+
+</body>
+</html>
