@@ -1,41 +1,41 @@
-from flask import Flask, render_template, request, jsonify
-from tensorflow.keras.models import load_model
-import numpy as np
-from PIL import Image
-import io
+from flask import Flask, render_template, request, redirect, url_for
 import os
 
-# Initialize the Flask app
-app = Flask(__name__, static_folder='public')  # static folder for public assets
+app = Flask(__name__)
 
-# Load the trained model (ensure model.h5 exists in your folder)
-model = load_model('model.h5')
-
-# Route for the homepage, showing the main form for uploading images
-@app.route('/')
+# Existing Routes
+@app.route("/")
 def home():
-    return render_template('index.html')  # Render the homepage
+    return render_template("index.html")
 
-# Route for predicting the disease (for uploaded images)
-@app.route('/predict', methods=['POST'])
-def predict():
-    # Get the uploaded image file from the form
-    file = request.files['image']  # Access the file from the form submission
-    
-    # Open the image file
-    img = Image.open(io.BytesIO(file.read()))  # Convert file to Image object
-    
-    # Preprocess the image (resize and normalize it)
-    img = img.resize((150, 150))  # Resize image to 150x150 pixels (model's input size)
-    img_array = np.array(img) / 255.0  # Normalize pixel values (between 0 and 1)
-    img_array = np.expand_dims(img_array, axis=0)  # Add batch dimension (necessary for prediction)
-    
-    # Make the prediction using the loaded model
-    prediction = model.predict(img_array)
-    
-    # Return prediction as JSON response
-    return jsonify({'prediction': prediction[0][0]})  # Output prediction as JSON
+@app.route("/detection")
+def detection():
+    return render_template("detection.html")
 
-# Run the Flask app
-if __name__ == '__main__':
+# New Routes
+@app.route("/dataset-info")
+def dataset_info():
+    return render_template("dataset_info.html")  # Serves dataset_info.html
+
+@app.route("/contact")
+def contact():
+    return render_template("contact.html")  # Serves contact.html
+
+@app.route("/submit-contact", methods=["POST"])
+def submit_contact():
+    # Handles form submission from contact.html
+    name = request.form.get("name")
+    email = request.form.get("email")
+    message = request.form.get("message")
+
+    # Save or process the contact form data
+    # Example: Save to a file (optional: integrate with a database)
+    contact_file = os.path.join("uploads", "contact_messages.txt")
+    with open(contact_file, "a") as f:
+        f.write(f"Name: {name}\nEmail: {email}\nMessage: {message}\n---\n")
+
+    # Redirect or show a success message
+    return "Thank you for contacting us! We will get back to you soon."
+
+if __name__ == "__main__":
     app.run(debug=True)
