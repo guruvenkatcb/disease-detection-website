@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Disease Detection</title>
+    <title>Disease Detection Result</title>
     <link rel="stylesheet" href="/static/css/styles.css">
 </head>
 <body>
     <header>
-        <h1>Disease Detection</h1>
+        <h1>Disease Detection Result</h1>
         <nav>
             <a href="/">Home</a>
+            <a href="/detection">Disease Detection</a>
             <a href="/dataset-info">Dataset Info</a>
-            <a href="/contact">Contact</a>
+            <a href="/contact">Contact Us</a>
         </nav>
     </header>
 
     <main>
-        <h2>Upload a medical image for disease detection</h2>
-        <form action="/detect" method="POST" enctype="multipart/form-data">
-            <input type="file" name="image" required>
-            <button type="submit">Detect Disease</button>
-        </form>
-        
+        <h2>Detection Result:</h2>
+        <p><strong>{{ result }}</strong></p>
+        <h3>Uploaded Image:</h3>
+        <img src="{{ url_for('static', filename=image_path) }}" alt="Uploaded Image">
     </main>
 
     <footer>

@@ -1,41 +1,65 @@
 from flask import Flask, render_template, request, redirect, url_for
 import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
 
-# Home route
+# Set up a folder to store uploaded files (if it doesn't exist)
+UPLOAD_FOLDER = 'uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+# Allowed file extensions
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+
+# Function to check allowed file types
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+# Route to serve the home page
 @app.route("/")
 def home():
     return render_template("index.html")
 
-# Disease Detection route
+# Route to serve the disease detection page
 @app.route("/detection")
 def detection():
     return render_template("disease_detection.html")
 
-# Dataset Info route
-@app.route("/dataset-info")
-def dataset_info():
-    return render_template("dataset_info.html")
-
-# Contact Us route
+# Route to process the contact form
 @app.route("/contact")
 def contact():
     return render_template("contact.html")
 
-# Contact form submission handler
-@app.route("/submit-contact", methods=["POST"])
-def submit_contact():
-    name = request.form.get("name")
-    email = request.form.get("email")
-    message = request.form.get("message")
+# Route to handle file upload and disease detection
+@app.route("/detect", methods=["POST"])
+def detect_disease():
+    if 'image' not in request.files:
+        return "No file part"
     
-    # Save contact message to file (or you could store in database)
-    contact_file = os.path.join("uploads", "contact_messages.txt")
-    with open(contact_file, "a") as f:
-        f.write(f"Name: {name}\nEmail: {email}\nMessage: {message}\n---\n")
+    file = request.files['image']
+    
+    if file.filename == '':
+        return "No selected file"
+    
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        
+        # Here you would add the logic to process the image and perform disease detection
+        # For now, we'll simulate the result
+        # Example: result = detect_disease_in_image(filepath)
+        result = "Pneumonia Detected"  # This is a placeholder for your actual detection logic
 
-    return "Thank you for contacting us! We will get back to you soon."
+        return render_template("detection_result.html", result=result, image_path=filepath)
+    else:
+        return "Invalid file format"
 
+# Route to display the result (disease detection outcome)
+@app.route("/result")
+def result():
+    return render_template("detection_result.html", result="No result yet")
+
+# Run the app
 if __name__ == "__main__":
     app.run(debug=True)
