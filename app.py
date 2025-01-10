@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for # type: ignore
+from flask import Flask, render_template, request, redirect, url_for  # type: ignore
 import os
 
 app = Flask(__name__)
@@ -10,7 +10,7 @@ def home():
 
 @app.route("/detection")
 def detection():
-    return render_template("detection.html")
+    return render_template("disease_detection.html")
 
 # New Routes
 @app.route("/dataset-info")
@@ -39,3 +39,4 @@ def submit_contact():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
