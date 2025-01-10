@@ -2,7 +2,7 @@ import tensorflow as tf
 from tensorflow.keras import layers, models
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping
-from sklearn.utils.class_weight import compute_class_weight
+from sklearn.utils.class_weight import compute_class_weight  # This refers to the actual scikit-learn package
 import os
 import numpy as np
 import pickle
@@ -96,3 +96,4 @@ print("Model saved as model.h5")
 with open('training_history.pkl', 'wb') as file:
     pickle.dump(history.history, file)
 print("Training history saved.")
+
