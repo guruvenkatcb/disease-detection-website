@@ -1,4 +1,64 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environment
+venv/
+.env/
+*.env
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# TensorFlow and Keras model files
+*.h5
+*.pb
+*.ckpt
+
+# Dataset and uploaded files
+dataset/
+*.csv
+*.tsv
+
+# Logs and debugging files
+logs/
+*.log
+
+# OS-generated files
+.DS_Store
+Thumbs.db
+*.swp
+
+# IDE-specific files
+.vscode/
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# Temporary files and folders
+*.tmp
+*.temp
+*.bak
+
+# Node.js dependencies
 node_modules/
+
+# Build files for frontend (React, etc.)
+build/
+dist/
+
+# Uploads or temporary user data
 uploads/
+
+# Environment and dependency files
+pip-log.txt
+env/
+
+# Disease-detection-specific
 disease-detection-env/
+
+# Ignore the .env file with sensitive information
 .env
