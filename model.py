@@ -2,7 +2,10 @@ import tensorflow as tf
 from tensorflow.keras import layers, models
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras.callbacks import EarlyStopping
+from sklearn.utils.class_weight import compute_class_weight
 import os
+import numpy as np
+import pickle
 
 # Dataset paths
 dataset_dir = os.path.join(os.getcwd(), 'dataset')
@@ -43,6 +46,15 @@ validation_generator = val_datagen.flow_from_directory(
     class_mode='binary'
 )
 
+# Calculate class weights
+class_weights = compute_class_weight(
+    class_weight='balanced',
+    classes=np.unique(train_generator.classes),
+    y=train_generator.classes
+)
+class_weights = dict(enumerate(class_weights))
+print("Class Weights:", class_weights)
+
 # Using a pre-trained model (MobileNetV2) for feature extraction
 base_model = tf.keras.applications.MobileNetV2(input_shape=(img_width, img_height, 3),
                                                include_top=False, weights='imagenet')
@@ -68,13 +80,19 @@ early_stopping = EarlyStopping(monitor='val_loss', patience=3)
 # Train the model
 history = model.fit(
     train_generator,
-    steps_per_epoch=train_generator.samples // batch_size,
-    epochs=10,  # Adjust based on your dataset
+    steps_per_epoch=train_generator.samples // (2 * batch_size),  # Halved to avoid overfitting
+    epochs=15,  # Increased due to class weights
     validation_data=validation_generator,
     validation_steps=validation_generator.samples // batch_size,
-    callbacks=[early_stopping]
+    callbacks=[early_stopping],
+    class_weight=class_weights  # Handling imbalance
 )
 
 # Save the trained model
 model.save('model.h5')
 print("Model saved as model.h5")
+
+# Save training history
+with open('training_history.pkl', 'wb') as file:
+    pickle.dump(history.history, file)
+print("Training history saved.")
